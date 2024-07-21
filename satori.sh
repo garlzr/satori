@@ -96,6 +96,25 @@ function install_satori() {
     chmod +x ./satori.py
     python3 -m venv "./satorienv"
     source "./satorienv/bin/activate"
+    echo "请复制代码执行配置环境 【source "./satorienv/bin/activate"】"
+}
+
+function check_service_status() {
+    echo "Checking Satori service status..."
+    sudo systemctl status satori.service
+}
+
+function watch_service_logs() {
+    echo "Watching Satori service logs..."
+    journalctl -fu satori.service
+}
+
+function unistall(){
+    rm -rf /root/.satori /root/satorienv
+}
+
+function config(){
+    cd $HOME/.satori
     pip install -r "./requirements.txt"
     deactivate
 
@@ -114,31 +133,29 @@ function install_satori() {
     echo "Satori installation and setup complete!"
 }
 
-function check_service_status() {
-    echo "Checking Satori service status..."
-    sudo systemctl status satori.service
-}
-
-function watch_service_logs() {
-    echo "Watching Satori service logs..."
-    journalctl -fu satori.service
-}
-
 echo "请选择要执行的功能:"
 echo "1) 安装 Satori"
-echo "2) 检查 Satori 服务状态"
-echo "3) 查看 Satori 服务日志"
-read -p "输入功能编号 (1, 2, 3): " func
+echo "2) 配置 Docker"
+echo "3) 检查 Satori 服务状态"
+echo "4) 查看 Satori 服务日志"
+echo "5) 卸载Satori"
+read -p "请输入你选择的功能 (1~5): " func
 
 case $func in
     1)
         install_satori
         ;;
     2)
-        check_service_status
+        config
         ;;
     3)
+        check_service_status
+        ;;
+    4)
         watch_service_logs
+        ;;
+    5)
+        unistall
         ;;
     *)
         echo "无效选项，请输入 1, 2 或 3."
