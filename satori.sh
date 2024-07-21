@@ -92,11 +92,14 @@ function install_satori() {
     fi
 
     # Run the install script
-    chmod +x ./neuron.sh
-    chmod +x ./satori.py
-    python3 -m venv "./satorienv"
-    source "./satorienv/bin/activate"
-    echo "请复制代码执行配置环境 【source "./satorienv/bin/activate"】"
+    chmod +x install.sh
+    bash install.sh
+
+    # Step 2: Set up a service to keep Satori running
+    chmod +x install_service.sh
+    bash install_service.sh
+
+    echo "Satori installation and setup complete!"
 }
 
 function check_service_status() {
