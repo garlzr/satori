@@ -11,9 +11,9 @@ fi
 SCRIPT_PATH="$HOME/satori.sh"
 
 echo ""
-echo "#####################"
-echo "# Installing Satori #"
-echo "#####################"
+echo "#################################################"
+echo "#               Installing Satori               #"
+echo "#################################################"
 echo ""
 
 function install_satori() {
@@ -111,6 +111,18 @@ function watch_service_logs() {
 
 function unistall(){
     rm -rf /root/.satori /root/satorienv
+    
+    # 获取所有基于 satorinet/satorineuron:latest 镜像的容器 ID
+    containers=$(docker ps -a -q --filter ancestor=satorinet/satorineuron:latest)
+    
+    # 停止这些容器
+    if [ -n "$containers" ]; then
+      docker stop $containers
+      docker rm $containers
+    fi
+    
+    # 删除镜像
+    docker rmi satorinet/satorineuron:latest
 }
 
 function config(){
