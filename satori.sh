@@ -20,7 +20,7 @@ echo ""
 function install_satori() {
     # Step -1: Install Docker
     echo "Step -1: Installing Docker..."
-
+    sudo apt-get update
     # Check if Docker is installed
     if ! [ -x "$(command -v docker)" ]; then
         echo "Docker is not installed. Installing Docker..."
