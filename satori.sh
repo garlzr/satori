@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# 检查是否以root用户运行脚本
+if [ "$(id -u)" != "0" ]; then
+    echo "此脚本需要以root用户权限运行。"
+    echo "请尝试使用 'sudo -i' 命令切换到root用户，然后再次运行此脚本。"
+    exit 1
+fi
+
+# 脚本保存路径
+SCRIPT_PATH="$HOME/satori.sh"
+
+echo ""
+echo "#####################"
+echo "# Installing Satori #"
+echo "#####################"
+echo ""
+
+function install_satori() {
+    # Step -1: Install Docker
+    echo "Step -1: Installing Docker..."
+
+    # Check if Docker is installed
+    if ! [ -x "$(command -v docker)" ]; then
+        echo "Docker is not installed. Installing Docker..."
+        sudo apt-get update
+        sudo apt-get install -y docker.io
+        sudo systemctl start docker
+        sudo systemctl enable docker
+    else
+        echo "Docker is already installed."
+    fi
+
+    # Step 0: Download and unzip Satori
+    echo "Step 0: Downloading and unzipping Satori..."
+
+        # 检查并安装zip
+    if ! dpkg -l | grep -q zip; then
+    echo "Installing zip..."
+    sudo apt-get install -y zip
+    else
+    echo "zip is already installed"
+    fi
+
+    # 检查并安装unzip
+    if ! dpkg -l | grep -q unzip; then
+    echo "Installing unzip..."
+    sudo apt-get install -y unzip
+    else
+    echo "unzip is already installed"
+    fi
+
+    # 检查并安装wget
+    if ! dpkg -l | grep -q wget; then
+    echo "Installing wget..."
+    sudo apt-get install -y wget
+    else
+    echo "wget is already installed"
+    fi
+
+    # 检查并安装curl
+    if ! dpkg -l | grep -q curl; then
+    echo "Installing curl..."
+    sudo apt-get install -y curl
+    else
+    echo "curl is already installed"
+    fi
+
+    cd ~
+    wget -P ~/ https://satorinet.io/static/download/linux/satori.zip
+    unzip ~/satori.zip
+    rm ~/satori.zip
+    cd ~/.satori
+
+    # Manual Step: Add referral code
+    echo "Creating config directory and adding referral code..."
+    mkdir -p ./config
+    read -p "Please enter your referral code: " referral_code
+    echo $referral_code >> ./config/referral.txt
+
+    # Step 1: Install dependencies
+    echo "Step 1: Installing dependencies..."
+
+    # 检查 python3-venv 是否已经安装
+    if dpkg -l | grep -qw python3-venv; then
+        echo "python3-venv 已经安装，跳过安装步骤。"
+    else
+        echo "正在安装 python3-venv..."
+        sudo apt-get update
+        sudo apt-get install python3-venv -y
+        echo "python3-venv 安装完成。"
+    fi
+
+    # Run the install script
+    chmod +x ./neuron.sh
+    chmod +x ./satori.py
+    python3 -m venv "./satorienv"
+    source "./satorienv/bin/activate"
+    pip install -r "./requirements.txt"
+    deactivate
+
+    # Step 2: Set up a service to keep Satori running
+    echo "Step 2: Setting up service to keep Satori running..."
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    newgrp docker
+    sed -i "s/#User=.*/User=$USER/" "$(pwd)/satori.service"
+    sed -i "s|WorkingDirectory=.*|WorkingDirectory=$(pwd)|" "$(pwd)/satori.service"
+    sudo cp satori.service /etc/systemd/system/satori.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable satori.service
+    sudo systemctl start satori.service
+
+    echo "Satori installation and setup complete!"
+}
+
+function check_service_status() {
+    echo "Checking Satori service status..."
+    sudo systemctl status satori.service
+}
+
+function watch_service_logs() {
+    echo "Watching Satori service logs..."
+    journalctl -fu satori.service
+}
+
+echo "请选择要执行的功能:"
+echo "1) 安装 Satori"
+echo "2) 检查 Satori 服务状态"
+echo "3) 查看 Satori 服务日志"
+read -p "输入功能编号 (1, 2, 3): " func
+
+case $func in
+    1)
+        install_satori
+        ;;
+    2)
+        check_service_status
+        ;;
+    3)
+        watch_service_logs
+        ;;
+    *)
+        echo "无效选项，请输入 1, 2 或 3."
+        ;;
+esac
