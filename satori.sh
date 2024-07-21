@@ -15,7 +15,8 @@ echo "#################################################"
 echo "#               Installing Satori               #"
 echo "#################################################"
 echo ""
-
+echo "安装成功请等待半小时初始化后 前往Dashboard链接【http://ip:24601】设置Vault密码 并且开启MINE-TO-VAULT====ENABLED模式"
+echo ""
 function install_satori() {
     # Step -1: Install Docker
     echo "Step -1: Installing Docker..."
