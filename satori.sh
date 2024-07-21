@@ -75,7 +75,16 @@ function install_satori() {
     # Manual Step: Add referral code
     echo "Creating config directory and adding referral code..."
     mkdir -p ./config
-    read -p "Please enter your referral code: " referral_code
+    # 设置默认推荐码
+    default_referral_code="0236ff9f79b4cfed36f703ddb4a58dd3fa0e22cad5517f40be05a038fe09e719ab"
+    
+    # 提示用户输入推荐码
+    read -p "输入邀请码(回车默认): " referral_code
+    
+    # 如果用户没有输入任何内容，则使用默认推荐码
+    referral_code=${referral_code:-$default_referral_code}
+    
+    # 将推荐码写入到文件中
     echo $referral_code >> ./config/referral.txt
 
     # Step 1: Install dependencies
@@ -150,10 +159,9 @@ function config(){
 
 echo "请选择要执行的功能:"
 echo "1) 安装 Satori"
-echo "2) 配置 Docker"
-echo "3) 检查 Satori 服务状态"
-echo "4) 查看 Satori 服务日志"
-echo "5) 卸载Satori"
+echo "2) 检查 Satori 服务状态"
+echo "3) 查看 Satori 服务日志"
+echo "4) 卸载Satori"
 read -p "请输入你选择的功能 (1~5): " func
 
 case $func in
@@ -161,18 +169,15 @@ case $func in
         install_satori
         ;;
     2)
-        config
-        ;;
-    3)
         check_service_status
         ;;
-    4)
+    3)
         watch_service_logs
         ;;
-    5)
+    4)
         unistall
         ;;
     *)
-        echo "无效选项，请输入 1, 2 或 3."
+        echo "无效选项，请输入 1, 2, 3 或 4."
         ;;
 esac
