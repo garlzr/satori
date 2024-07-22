@@ -147,11 +147,9 @@ function config(){
 
     # Run the install script
     chmod +x install.sh
-    bash install.sh
 
     # Step 2: Set up a service to keep Satori running
     chmod +x install_service.sh
-    bash install_service.sh
 }
 
 ehco "第一步安装完后 请手动执行bash $HOME/.satori/install.sh 和bash $HOME/.satori/install_service.sh"
