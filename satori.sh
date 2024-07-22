@@ -100,16 +100,6 @@ function install_satori() {
         sudo apt-get install python3-venv -y
         echo "python3-venv 安装完成。"
     fi
-
-    # Run the install script
-    chmod +x install.sh
-    bash install.sh
-
-    # Step 2: Set up a service to keep Satori running
-    chmod +x install_service.sh
-    bash install_service.sh
-
-    echo "Satori installation and setup complete!"
 }
 
 function check_service_status() {
@@ -155,13 +145,20 @@ function config(){
     sudo systemctl enable satori.service
     sudo systemctl start satori.service
 
-    echo "Satori installation and setup complete!"
+    # Run the install script
+    chmod +x install.sh
+    bash install.sh
+
+    # Step 2: Set up a service to keep Satori running
+    chmod +x install_service.sh
+    bash install_service.sh
 }
 
+ehco "第一步安装完后 请手动执行bash $HOME/.satori/install.sh 和bash $HOME/.satori/install_service.sh"
 echo "请选择要执行的功能:"
 echo "1) 安装 Satori"
 echo "2) 检查 Satori 服务状态"
-echo "3) 查看 Satori 服务日志"
+echo "3) 查看 Satori 服务日志[查看挖矿日志]"
 echo "4) 卸载Satori"
 read -p "请输入你选择的功能 (1~5): " func
 
