@@ -17,7 +17,7 @@ echo "#################################################"
 echo ""
 echo "安装成功请等待半小时初始化后 前往Dashboard链接【http://ip:24601】设置Vault密码 并且开启MINE-TO-VAULT====ENABLED模式"
 echo ""
-echo "第一步安装完后 请手动执行bash $HOME/.satori/install.sh 和bash $HOME/.satori/install_service.sh"
+echo "第一步安装完后 请手动执行三条命令cd $HOME/.satori || bash $HOME/.satori/install.sh || bash $HOME/.satori/install_service.sh"
 echo ""
 function install_satori() {
     # Step -1: Install Docker
