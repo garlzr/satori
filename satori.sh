@@ -125,9 +125,6 @@ function unistall(){
       docker stop $containers
       docker rm $containers
     fi
-    
-    # 删除镜像
-    docker rmi satorinet/satorineuron:latest
 }
 
 function config(){
