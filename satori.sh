@@ -127,6 +127,20 @@ function unistall(){
     fi
 }
 
+function restart(){
+    cd $HOME/.satori
+    # 获取所有基于 satorinet/satorineuron:latest 镜像的容器 ID
+    containers=$(docker ps -a -q --filter ancestor=satorinet/satorineuron:latest)
+    
+    # 停止这些容器
+    if [ -n "$containers" ]; then
+      docker stop $containers
+    fi
+
+    sudo systemctl start satori.service
+    echo "已重启Satori，请执行功能3查看日志"
+}
+
 function config(){
     cd $HOME/.satori
     pip install -r "./requirements.txt"
@@ -156,6 +170,7 @@ echo "1) 安装 Satori"
 echo "2) 检查 Satori 服务状态"
 echo "3) 查看 Satori 服务日志[查看挖矿日志]"
 echo "4) 卸载Satori"
+echo "5) 重启Satori"
 read -p "请输入你选择的功能 (1~5): " func
 
 case $func in
@@ -170,6 +185,9 @@ case $func in
         ;;
     4)
         unistall
+        ;;
+    5)
+        restart
         ;;
     *)
         echo "无效选项，请输入 1, 2, 3 或 4."
